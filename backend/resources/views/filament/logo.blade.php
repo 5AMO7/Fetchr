@@ -1,0 +1,1 @@
+<img src="{{ asset('images/logo.svg') }}" alt="Fetchr" class="h-10 w-auto" />
