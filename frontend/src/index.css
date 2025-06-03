@@ -16,6 +16,7 @@
   -moz-osx-font-smoothing: grayscale;
 
   --color-accent: #157145;
+  --color-accent-dark: #0f5533;
   --color-bad: #CE4040;
 
   --color-text-primary: #262626;
@@ -121,4 +122,57 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+/* Markdown Editor Overrides */
+.w-md-editor {
+  box-shadow: none !important;
+}
+
+.w-md-editor-toolbar {
+  border-bottom: 1px solid #CFD3D5 !important;
+  background-color: #F5F7F9 !important;
+}
+
+.w-md-editor-text {
+  padding: 16px !important;
+}
+
+.w-md-editor-preview {
+  padding: 16px !important;
+  box-shadow: inset 1px 0 0 0 #CFD3D5 !important;
+}
+
+.w-md-editor-show-live {
+  background-color: white !important;
+}
+
+.w-md-editor-toolbar button {
+  color: #707070 !important;
+}
+
+.w-md-editor-toolbar button:hover {
+  color: #157145 !important;
+}
+
+.w-md-editor-toolbar button.active {
+  color: #157145 !important;
+}
+
+/* Placeholder styles */
+.wmde-markdown a[href="placeholder"] {
+  display: inline-block;
+  background-color: rgba(21, 113, 69, 0.1);
+  border: 1px dashed #157145;
+  border-radius: 4px;
+  padding: 0 6px;
+  font-family: monospace;
+  color: #157145;
+  text-decoration: none;
+  margin: 0 2px;
+}
+
+.wmde-markdown a[href="placeholder"]:hover {
+  background-color: rgba(21, 113, 69, 0.15);
+  border-color: #0f5533;
 }

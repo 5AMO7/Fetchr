@@ -1,6 +1,6 @@
-function DividerLine() {
+function DividerLine({ width }) {
     return (
-        <hr className='w-[19rem] h-px border border-border-medium'/>
+        <hr className={`${width || 'w-full'} h-px border border-border-medium`}/>
     );
 }
 

@@ -26,9 +26,9 @@ function Alert({type, message}) {
     }
 
     return (
-        <div className={`flex items-center w-full px-4 py-1 ${backgroundColor} border ${borderColor} rounded-xl gap-4`}>
+        <div className={`flex items-center w-full px-4 py-2 ${backgroundColor} border ${borderColor} rounded-xl gap-4`}>
             <span>{icon}</span>
-            <span className="text-sm">{message}</span>
+            <span className={`text-sm ${iconColor}`}>{message}</span>
         </div>
     );
 }
