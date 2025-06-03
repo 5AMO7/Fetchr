@@ -1,9 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import api from '../utils/api';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import EmailPlaceholders from '../components/EmailPlaceholders';
+import AIEmailEnhancer from '../components/AIEmailEnhancer';
 import { useToast } from '../context/ToastContext';
 
 // Custom commands so that there is no insert image button
@@ -31,6 +32,7 @@ function EmailTemplatesCreate() {
     const [body, setBody] = useState('');
     const [editorView] = useState('edit');
     const [isLoading, setIsLoading] = useState(false);
+    const [showEditor, setShowEditor] = useState(true); // Control editor visibility
     const navigate = useNavigate();
     const textareaRef = useRef(null);
     const { showToast } = useToast();
@@ -78,6 +80,38 @@ function EmailTemplatesCreate() {
             }
         }, 0);
     };
+
+    const handleAIContentUpdate = (newContent) => {
+        console.log('AI Content Update received:', newContent.substring(0, 100) + '...');
+        console.log('Current body before update:', body.substring(0, 100) + '...');
+        
+        // Temporarily hide the editor
+        setShowEditor(false);
+        
+        // Update the content
+        setBody(newContent);
+        
+        // Show the editor again with new content after a brief delay
+        setTimeout(() => {
+            setShowEditor(true);
+            console.log('Editor remounted with new content');
+        }, 100);
+        
+        // Log after a delay to verify persistence
+        setTimeout(() => {
+            console.log('Body state after AI update:', body.substring(0, 100) + '...');
+        }, 600);
+    };
+
+    const handleAISubjectUpdate = (newSubject) => {
+        console.log('AI Subject Update received:', newSubject);
+        setSubject(newSubject);
+    };
+
+    // Force MDEditor to sync with our state when body changes from AI
+    useEffect(() => {
+        console.log('Body state changed via useEffect:', body.substring(0, 100) + '...');
+    }, [body]);
 
     return (
         <div className='flex h-screen w-screen'>
@@ -129,19 +163,30 @@ function EmailTemplatesCreate() {
                                 </label>
                                 <div className="flex gap-2">
                                     <EmailPlaceholders onInsertPlaceholder={handleInsertPlaceholder} />
+                                    <AIEmailEnhancer 
+                                        currentContent={body}
+                                        onContentUpdate={handleAIContentUpdate}
+                                        onSubjectUpdate={handleAISubjectUpdate}
+                                    />
                                 </div>
                             </div>
                             <div data-color-mode="light">
-                                <MDEditor
-                                    id="body"
-                                    value={body}
-                                    onChange={setBody}
-                                    height={350}
-                                    preview={editorView}
-                                    className="border border-border-dark rounded-lg"
-                                    textareaProps={{ ref: textareaRef }}
-                                    commands={customCommands}
-                                />
+                                {showEditor ? (
+                                    <MDEditor
+                                        id="body"
+                                        value={body}
+                                        onChange={setBody}
+                                        height={350}
+                                        preview={editorView}
+                                        className="border border-border-dark rounded-lg"
+                                        textareaProps={{ ref: textareaRef }}
+                                        commands={customCommands}
+                                    />
+                                ) : (
+                                    <div className="border border-border-dark rounded-lg h-[350px] flex items-center justify-center bg-gray-50">
+                                        <div className="text-gray-500">Updating content...</div>
+                                    </div>
+                                )}
                             </div>
                             <p className="text-xs text-text-secondary-dark mt-1">
                                 Format your email using the toolbar buttons above or by writing Markdown directly. 

@@ -88,13 +88,13 @@ function CampaignLeadsTab({ campaign }) {
                         {campaignLeads.length} lead{campaignLeads.length !== 1 ? 's' : ''} in this campaign
                     </p>
                 </div>
-                <button 
+                <div
                     onClick={handleAddLeads}
-                    className="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors"
+                    className="h-9 flex items-center justify-center bg-background-primary rounded-lg border border-accent px-6 cursor-pointer hover:bg-dark-primary hover:border-accent-dark transition-all duration-300 ease-in-out small-button-shadow"
                 >
-                    <PlusIcon className="w-4 h-4" />
-                    Add Leads
-                </button>
+                    <PlusIcon className="w-4 h-4 text-accent mr-2" />
+                    <span className="text-accent font-medium">Add Leads</span>
+                </div>
             </div>
 
             {campaignLeads.length === 0 ? (
@@ -105,12 +105,12 @@ function CampaignLeadsTab({ campaign }) {
                         <p className="text-text-secondary-dark mb-4">
                             Add leads to this campaign to start your outreach sequence.
                         </p>
-                        <button 
+                        <div
                             onClick={handleAddLeads}
-                            className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors"
+                            className="h-9 flex items-center justify-center bg-background-primary rounded-lg border border-accent px-6 cursor-pointer hover:bg-dark-primary hover:border-accent-dark transition-all duration-300 ease-in-out small-button-shadow"
                         >
-                            Add Your First Lead
-                        </button>
+                            <span className="text-accent font-medium">Add Your First Lead</span>
+                        </div>
                     </div>
                 </div>
             ) : (
@@ -156,12 +156,12 @@ function CampaignLeadsTab({ campaign }) {
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <button
+                                        <div
                                             onClick={() => handleRemoveLead(campaignLead.id)}
-                                            className="px-3 py-1 text-sm text-red-600 hover:text-red-700 border border-red-600 hover:border-red-700 rounded transition-colors"
+                                            className="h-8 flex items-center justify-center bg-background-primary rounded-lg border border-red-600 px-3 cursor-pointer hover:bg-red-50 hover:border-red-700 transition-all duration-300 ease-in-out small-button-shadow"
                                         >
-                                            Remove
-                                        </button>
+                                            <span className="text-red-600 text-sm font-medium">Remove</span>
+                                        </div>
                                     </div>
                                 </div>
                             ))}

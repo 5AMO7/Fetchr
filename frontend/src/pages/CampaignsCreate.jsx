@@ -6,7 +6,9 @@ import api from '../utils/api';
 import { useToast } from '../context/ToastContext';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import EmailPlaceholders from '../components/EmailPlaceholders';
+import AIEmailEnhancer from '../components/AIEmailEnhancer';
 import LeadSelector from '../components/LeadSelector';
+import TooltipWrapper from '../components/TooltipWrapper';
 
 // Custom commands so that there is no insert image button
 const customCommands = [
@@ -51,13 +53,14 @@ function CampaignsCreate() {
             subject: '',
             body: '',
             delay: 0, // First step is sent immediately
-            delayUnit: 'days' // 'minutes', 'hours', 'days', 'weeks'
+            delayUnit: 'days', // 'minutes', 'hours', 'days', 'weeks'
+            showEditor: true // Control editor visibility for each step
         }
     ]);
 
     // Step 3: Leads data
     const [leads, setLeads] = useState([]);
-
+    
     const stepTitles = [
         { number: 1, title: 'Campaign', active: currentStep === 1 },
         { number: 2, title: 'Steps', active: currentStep === 2 },
@@ -89,9 +92,46 @@ function CampaignsCreate() {
     };
 
     const handleStepChange = (stepId, field, value) => {
-        setSteps(prev => prev.map(step => 
+        console.log(`Step change - ID: ${stepId}, Field: ${field}, Value preview: ${value ? value.substring(0, 50) + '...' : 'empty'}`);
+        setSteps(prevSteps => prevSteps.map(step => 
             step.id === stepId ? { ...step, [field]: value } : step
         ));
+    };
+
+    const handleAIContentUpdate = (stepId, newContent) => {
+        console.log(`AI Content Update for step ${stepId}:`, newContent.substring(0, 100) + '...');
+        
+        // Find current step content before update
+        const currentStep = steps.find(s => s.id === stepId);
+        console.log(`Current step content before AI update:`, currentStep?.body?.substring(0, 100) + '...');
+        
+        // Hide the editor for this step
+        setSteps(prevSteps => prevSteps.map(step => 
+            step.id === stepId 
+                ? { ...step, showEditor: false } 
+                : step
+        ));
+        
+        // Update the step content after a brief delay
+        setTimeout(() => {
+            setSteps(prevSteps => prevSteps.map(step => 
+                step.id === stepId 
+                    ? { ...step, body: newContent, showEditor: true } 
+                    : step
+            ));
+            console.log(`Editor remounted for step ${stepId} with new content`);
+        }, 100);
+        
+        // Log after a delay to verify persistence
+        setTimeout(() => {
+            const updatedStep = steps.find(s => s.id === stepId);
+            console.log(`Step content after AI update:`, updatedStep?.body?.substring(0, 100) + '...');
+        }, 600);
+    };
+
+    const handleAISubjectUpdate = (stepId, newSubject) => {
+        console.log(`AI Subject Update for step ${stepId}:`, newSubject);
+        handleStepChange(stepId, 'subject', newSubject);
     };
 
     const handleTemplateSelection = (stepId, templateId) => {
@@ -127,7 +167,8 @@ function CampaignsCreate() {
             subject: '',
             body: '',
             delay: 1, // Default to 1 day delay for new steps
-            delayUnit: 'days'
+            delayUnit: 'days',
+            showEditor: true // Initialize editor visibility for new steps
         };
         setSteps(prev => [...prev, newStep]);
     };
@@ -376,12 +417,12 @@ function CampaignsCreate() {
                                 Step {index + 1}
                             </h3>
                             {steps.length > 1 && (
-                                <button
+                                <div
                                     onClick={() => removeStep(step.id)}
-                                    className="text-red-600 hover:text-red-800 text-sm"
+                                    className="h-8 flex items-center justify-center bg-background-primary rounded-lg border border-red-600 px-3 cursor-pointer hover:bg-red-50 hover:border-red-700 transition-all duration-300 ease-in-out small-button-shadow"
                                 >
-                                    Remove
-                                </button>
+                                    <span className="text-red-600 text-sm font-medium">Remove</span>
+                                </div>
                             )}
                         </div>
                         
@@ -458,17 +499,28 @@ function CampaignsCreate() {
                                     </label>
                                     <div className="flex gap-2">
                                         <EmailPlaceholders onInsertPlaceholder={(placeholderText) => handleInsertPlaceholder(step.id, placeholderText)} />
+                                        <AIEmailEnhancer 
+                                            currentContent={step.body}
+                                            onContentUpdate={(content) => handleAIContentUpdate(step.id, content)}
+                                            onSubjectUpdate={(subject) => handleAISubjectUpdate(step.id, subject)}
+                                        />
                                     </div>
                                 </div>
                                 <div data-color-mode="light">
-                                    <MDEditor
-                                        value={step.body}
-                                        onChange={(value) => handleStepChange(step.id, 'body', value || '')}
-                                        height={350}
-                                        preview="edit"
-                                        className="border border-border-dark rounded-lg"
-                                        commands={customCommands}
-                                    />
+                                    {step.showEditor ? (
+                                        <MDEditor
+                                            value={step.body}
+                                            onChange={(value) => handleStepChange(step.id, 'body', value || '')}
+                                            height={350}
+                                            preview="edit"
+                                            className="border border-border-dark rounded-lg"
+                                            commands={customCommands}
+                                        />
+                                    ) : (
+                                        <div className="border border-border-dark rounded-lg h-[350px] flex items-center justify-center bg-gray-50">
+                                            <div className="text-gray-500">Updating content...</div>
+                                        </div>
+                                    )}
                                 </div>
                                 <p className="text-xs text-text-secondary-dark mt-1">
                                     Format your email using the toolbar buttons above or by writing Markdown directly. 
@@ -481,13 +533,13 @@ function CampaignsCreate() {
                 ))}
                 
                 <div className="flex-shrink-0 w-64 flex items-center justify-center">
-                    <button
+                    <div
                         onClick={addStep}
-                        className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-300 rounded-lg hover:border-accent transition-colors"
+                        className="h-9 flex items-center justify-center bg-background-primary rounded-lg border border-accent px-6 cursor-pointer hover:bg-dark-primary hover:border-accent-dark transition-all duration-300 ease-in-out small-button-shadow"
                     >
-                        <PlusIcon className="w-8 h-8 text-gray-400 mb-2" />
-                        <span className="text-lg font-medium text-gray-600">Add a step</span>
-                    </button>
+                        <PlusIcon className="w-5 h-5 text-accent mr-2" />
+                        <span className="text-accent font-medium">Add a step</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -500,12 +552,12 @@ function CampaignsCreate() {
                     <h2 className="text-2xl font-semibold text-text-primary">Add leads</h2>
                     <p className="text-text-secondary-dark">Select leads from your database to include in this campaign</p>
                 </div>
-                <button
+                <div
                     onClick={addLead}
-                    className="px-4 py-2 border border-accent text-accent rounded hover:bg-accent hover:text-white transition-colors"
+                    className="h-9 flex items-center justify-center bg-background-primary rounded-lg border border-accent px-6 cursor-pointer hover:bg-dark-primary hover:border-accent-dark transition-all duration-300 ease-in-out small-button-shadow"
                 >
-                    Add leads
-                </button>
+                    <span className="text-accent font-medium">Add leads</span>
+                </div>
             </div>
 
             <div className="border border-gray-200 rounded-lg">
@@ -518,12 +570,12 @@ function CampaignsCreate() {
                             </span>
                         </div>
                         {leads.length > 0 && (
-                            <button
+                            <div
                                 onClick={() => setLeads([])}
-                                className="text-sm text-red-600 hover:text-red-700 transition-colors"
+                                className="h-8 flex items-center justify-center bg-background-primary rounded-lg border border-red-600 px-3 cursor-pointer hover:bg-red-50 hover:border-red-700 transition-all duration-300 ease-in-out small-button-shadow"
                             >
-                                Remove all
-                            </button>
+                                <span className="text-red-600 text-sm font-medium">Remove all</span>
+                            </div>
                         )}
                     </div>
                 </div>
@@ -556,12 +608,14 @@ function CampaignsCreate() {
                                         }
                                     </div>
                                 </div>
-                                <button
-                                    onClick={() => removeLead(lead.id)}
-                                    className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
-                                >
-                                    <XMarkIcon className="w-4 h-4" />
-                                </button>
+                                <TooltipWrapper tooltip={'Remove lead'}>
+                                    <div
+                                        onClick={() => removeLead(lead.id)}
+                                        className="h-8 w-8 flex items-center justify-center bg-background-primary rounded-lg border border-red-600 cursor-pointer hover:bg-red-50 hover:border-red-700 transition-all duration-300 ease-in-out small-button-shadow"
+                                    >
+                                        <XMarkIcon className="w-4 h-4 text-red-600" />
+                                    </div>
+                                </TooltipWrapper>
                             </div>
                         ))}
                     </div>
@@ -604,24 +658,25 @@ function CampaignsCreate() {
                 <div className="flex justify-end max-w-6xl mx-auto w-full">
                     <div className="flex space-x-4">
                         {currentStep > 1 && (
-                            <button
+                            <div
                                 onClick={() => setCurrentStep(currentStep - 1)}
-                                className="px-6 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                                className="h-9 flex items-center justify-center bg-background-primary rounded-lg border border-border-dark px-6 cursor-pointer hover:bg-dark-primary transition-all duration-300 ease-in-out small-button-shadow"
                             >
-                                Back
-                            </button>
+                                <span className="text-text-primary font-medium">Back</span>
+                            </div>
                         )}
                         
-                        <button
+                        <div
                             onClick={handleContinue}
-                            disabled={!canContinue() || isLoading}
-                            className="px-6 py-2 bg-white border-2 border-gray-900 text-gray-900 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                            className={`h-9 flex items-center justify-center bg-background-primary rounded-lg border border-accent px-6 cursor-pointer hover:bg-dark-primary hover:border-accent-dark transition-all duration-300 ease-in-out small-button-shadow ${(!canContinue() || isLoading) ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
-                            {isLoading ? 'Creating...' : (currentStep === 3 ? 'Create Campaign' : 'continue')}
+                            <span className="text-accent font-medium">
+                                {isLoading ? 'Creating...' : (currentStep === 3 ? 'Create Campaign' : 'Continue')}
+                            </span>
                             {!isLoading && currentStep < 3 && (
-                                <span className="ml-2">▶</span>
+                                <span className="ml-2 text-accent">▶</span>
                             )}
-                        </button>
+                        </div>
                     </div>
                 </div>
             </main>

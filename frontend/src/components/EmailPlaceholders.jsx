@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { ChevronDownIcon, ChevronUpIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, ChevronRightIcon, UserIcon, UsersIcon, CalendarIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 
 const placeholderGroups = [
   {
     name: 'Sender',
-    icon: '👤',
+    icon: <UserIcon className="h-4 w-4 text-accent stroke-2" />,
     placeholders: [
       { key: 'sender.first-name', label: 'First Name', description: "Sender's first name" },
       { key: 'sender.last-name', label: 'Last Name', description: "Sender's last name" },
@@ -23,7 +23,7 @@ const placeholderGroups = [
   },
   {
     name: 'Receiver',
-    icon: '👥',
+    icon: <UsersIcon className="h-4 w-4 text-accent stroke-2" />,
     placeholders: [
       { key: 'receiver.email', label: 'Email Address', description: "Email address" },
       { key: 'receiver.company', label: 'Company', description: "Company name" },
@@ -34,7 +34,7 @@ const placeholderGroups = [
   },
   {
     name: 'Date & Time',
-    icon: '📅',
+    icon: <CalendarIcon className="h-4 w-4 text-accent stroke-2" />,
     placeholders: [
       { key: 'current.date', label: 'Current Date', description: "Current date (e.g. May 20, 2025)" },
       { key: 'current.day', label: 'Day of Week', description: "Day of the week" }
@@ -42,7 +42,7 @@ const placeholderGroups = [
   },
   {
     name: 'Other',
-    icon: '⚙️',
+    icon: <Cog6ToothIcon className="h-4 w-4 text-accent stroke-2" />,
     placeholders: [
       { key: 'unsubscribe.link', label: 'Unsubscribe Link', description: "Link to unsubscribe" }
     ]
@@ -73,11 +73,7 @@ function EmailPlaceholders({ onInsertPlaceholder }) {
         className="flex items-center gap-1 text-xs px-3 pe-2 py-1 rounded-md bg-background-primary text-text-secondary-dark hover:bg-background-secondary hover:border-accent border border-border-dark"
       >
         <span>Placeholders</span>
-        {isOpen ? (
-          <ChevronUpIcon className="h-3 w-3 stroke-2" />
-        ) : (
-          <ChevronDownIcon className="h-3 w-3 stroke-2" />
-        )}
+          <ChevronDownIcon className={`h-3 w-3 stroke-2 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (

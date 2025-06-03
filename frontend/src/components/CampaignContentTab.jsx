@@ -71,10 +71,12 @@ function CampaignContentTab({ campaign }) {
                         {steps.length} step{steps.length !== 1 ? 's' : ''} in this campaign sequence
                     </p>
                 </div>
-                <button className="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors">
-                    <PlusIcon className="w-4 h-4" />
-                    Add Step
-                </button>
+                <div
+                    className="h-9 flex items-center justify-center bg-background-primary rounded-lg border border-accent px-6 cursor-pointer hover:bg-dark-primary hover:border-accent-dark transition-all duration-300 ease-in-out small-button-shadow"
+                >
+                    <PlusIcon className="w-4 h-4 text-accent mr-2" />
+                    <span className="text-accent font-medium">Add Step</span>
+                </div>
             </div>
 
             {steps.length === 0 ? (
@@ -85,9 +87,9 @@ function CampaignContentTab({ campaign }) {
                         <p className="text-text-secondary-dark mb-4">
                             Create email steps to build your campaign sequence.
                         </p>
-                        <button className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors">
-                            Create Your First Step
-                        </button>
+                        <div className="h-9 flex items-center justify-center bg-background-primary rounded-lg border border-accent px-6 cursor-pointer hover:bg-dark-primary hover:border-accent-dark transition-all duration-300 ease-in-out small-button-shadow">
+                            <span className="text-accent font-medium">Create Your First Step</span>
+                        </div>
                     </div>
                 </div>
             ) : (
@@ -123,18 +125,18 @@ function CampaignContentTab({ campaign }) {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <button className="px-3 py-1 text-sm text-blue-600 hover:text-blue-700 border border-blue-600 hover:border-blue-700 rounded transition-colors">
-                                            Edit
-                                        </button>
-                                        <button className="px-3 py-1 text-sm text-accent hover:text-accent-dark border border-accent hover:border-accent-dark rounded transition-colors">
-                                            Preview
-                                        </button>
-                                        <button
+                                        <div className="h-8 flex items-center justify-center bg-background-primary rounded-lg border border-blue-600 px-3 cursor-pointer hover:bg-blue-50 hover:border-blue-700 transition-all duration-300 ease-in-out small-button-shadow">
+                                            <span className="text-blue-600 text-sm font-medium">Edit</span>
+                                        </div>
+                                        <div className="h-8 flex items-center justify-center bg-background-primary rounded-lg border border-accent px-3 cursor-pointer hover:bg-dark-primary hover:border-accent-dark transition-all duration-300 ease-in-out small-button-shadow">
+                                            <span className="text-accent text-sm font-medium">Preview</span>
+                                        </div>
+                                        <div
                                             onClick={() => handleDeleteStep(step.id)}
-                                            className="px-3 py-1 text-sm text-red-600 hover:text-red-700 border border-red-600 hover:border-red-700 rounded transition-colors"
+                                            className="h-8 flex items-center justify-center bg-background-primary rounded-lg border border-red-600 px-3 cursor-pointer hover:bg-red-50 hover:border-red-700 transition-all duration-300 ease-in-out small-button-shadow"
                                         >
-                                            Delete
-                                        </button>
+                                            <span className="text-red-600 text-sm font-medium">Delete</span>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -150,9 +152,9 @@ function CampaignContentTab({ campaign }) {
                                                 }}
                                             />
                                             {step.body && step.body.length > 100 && (
-                                                <button className="text-accent text-xs mt-2 hover:text-accent-dark">
+                                                <span className="text-accent text-xs mt-2 hover:text-accent-dark cursor-pointer underline">
                                                     View Full Content
-                                                </button>
+                                                </span>
                                             )}
                                         </div>
                                     </div>

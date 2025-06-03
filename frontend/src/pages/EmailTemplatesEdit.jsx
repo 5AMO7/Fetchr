@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import api from '../utils/api';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import EmailPlaceholders from '../components/EmailPlaceholders';
+import AIEmailEnhancer from '../components/AIEmailEnhancer';
 import { useToast } from '../context/ToastContext';
 
 // Custom commands so that there is no insert image button
@@ -33,9 +35,16 @@ function EmailTemplatesEdit() {
     const [editorView] = useState('edit');
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingTemplate, setIsLoadingTemplate] = useState(true);
+    const [forceRender, setForceRender] = useState(0); // Force re-render trigger
     const navigate = useNavigate();
     const textareaRef = useRef(null);
     const { showToast } = useToast();
+    const currentContentRef = useRef('');
+
+    // Initialize content ref
+    useEffect(() => {
+        currentContentRef.current = body;
+    }, [body]);
 
     // Fetch the template data when the component loads
     useEffect(() => {
@@ -55,7 +64,8 @@ function EmailTemplatesEdit() {
         };
 
         fetchTemplate();
-    }, [id, showToast]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id]); // Only depend on id, not showToast to prevent re-running and overwriting AI content
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -99,6 +109,57 @@ function EmailTemplatesEdit() {
             }
         }, 0);
     };
+
+    const handleAIContentUpdate = (newContent) => {
+        console.log('AI Content Update received:', newContent.substring(0, 100) + '...');
+        console.log('Current body before update:', body.substring(0, 100) + '...');
+        
+        // Step 1: Clear the content first
+        flushSync(() => {
+            console.log('Step 1: Clearing content');
+            setBody('');
+            setForceRender(prev => prev + 1);
+        });
+        
+        // Step 2: Set the new content after a brief delay
+        setTimeout(() => {
+            flushSync(() => {
+                console.log('Step 2: Setting new content');
+                setBody(newContent);
+                currentContentRef.current = newContent;
+                setForceRender(prev => prev + 1);
+            });
+            
+            console.log('AI content update complete');
+        }, 50);
+        
+        // Verify the update worked
+        setTimeout(() => {
+            console.log('Final verification - body state:', body.substring(0, 100) + '...');
+            console.log('Final verification - ref content:', currentContentRef.current.substring(0, 100) + '...');
+            
+            const textarea = document.querySelector('.w-md-editor-text-input');
+            if (textarea) {
+                console.log('Final verification - DOM textarea:', textarea.value.substring(0, 100) + '...');
+            }
+        }, 200);
+    };
+
+    const handleBodyChange = (value) => {
+        const newValue = value || '';
+        console.log('Body change detected:', newValue.substring(0, 50) + '...');
+        currentContentRef.current = newValue;
+        setBody(newValue);
+    };
+
+    const handleAISubjectUpdate = (newSubject) => {
+        console.log('AI Subject Update received:', newSubject);
+        setSubject(newSubject);
+    };
+
+    useEffect(() => {
+        console.log('Body state changed via useEffect:', body.substring(0, 100) + '...');
+    }, [body]);
 
     if (isLoadingTemplate) {
         return (
@@ -162,13 +223,18 @@ function EmailTemplatesEdit() {
                                 </label>
                                 <div className="flex gap-2">
                                     <EmailPlaceholders onInsertPlaceholder={handleInsertPlaceholder} />
+                                    <AIEmailEnhancer 
+                                        currentContent={body}
+                                        onContentUpdate={handleAIContentUpdate}
+                                        onSubjectUpdate={handleAISubjectUpdate}
+                                    />
                                 </div>
                             </div>
-                            <div data-color-mode="light">
+                            <div data-color-mode="light" key={`editor-${forceRender}`}>
                                 <MDEditor
                                     id="body"
                                     value={body}
-                                    onChange={setBody}
+                                    onChange={handleBodyChange}
                                     height={350}
                                     preview={editorView}
                                     className="border border-border-dark rounded-lg"

@@ -198,19 +198,19 @@ function CampaignEmailsTab({ campaign }) {
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {log.status === 'sent' && (
-                                            <button className="px-3 py-1 text-sm text-accent hover:text-accent-dark border border-accent hover:border-accent-dark rounded transition-colors">
-                                                <EyeIcon className="w-4 h-4" />
-                                            </button>
+                                            <div className="h-8 w-8 flex items-center justify-center bg-background-primary rounded-lg border border-accent cursor-pointer hover:bg-dark-primary hover:border-accent-dark transition-all duration-300 ease-in-out small-button-shadow">
+                                                <EyeIcon className="w-4 h-4 text-accent" />
+                                            </div>
                                         )}
                                         {log.status === 'pending' && (
-                                            <button className="px-3 py-1 text-sm text-blue-600 hover:text-blue-700 border border-blue-600 hover:border-blue-700 rounded transition-colors">
-                                                Send Now
-                                            </button>
+                                            <div className="h-8 flex items-center justify-center bg-background-primary rounded-lg border border-blue-600 px-3 cursor-pointer hover:bg-blue-50 hover:border-blue-700 transition-all duration-300 ease-in-out small-button-shadow">
+                                                <span className="text-blue-600 text-sm font-medium">Send Now</span>
+                                            </div>
                                         )}
                                         {log.status === 'failed' && (
-                                            <button className="px-3 py-1 text-sm text-red-600 hover:text-red-700 border border-red-600 hover:border-red-700 rounded transition-colors">
-                                                Retry
-                                            </button>
+                                            <div className="h-8 flex items-center justify-center bg-background-primary rounded-lg border border-red-600 px-3 cursor-pointer hover:bg-red-50 hover:border-red-700 transition-all duration-300 ease-in-out small-button-shadow">
+                                                <span className="text-red-600 text-sm font-medium">Retry</span>
+                                            </div>
                                         )}
                                     </div>
                                 </div>

@@ -118,13 +118,15 @@ function CampaignTableRow({ id, name, description, status, createdAt, onDeleted 
                             <ArrowRightIcon className="w-4 h-4 text-text-primary stroke-2 ms-[2px]"/>
                         </div>
                     </TooltipWrapper>
-                    <button
-                        onClick={handleDeleteClick}
-                        disabled={isDeleting}
-                        className="px-3 py-1 text-sm text-red-600 hover:text-red-700 border border-red-600 hover:border-red-700 rounded transition-colors disabled:opacity-50"
-                    >
-                        {isDeleting ? 'Deleting...' : 'Delete'}
-                    </button>
+                    <TooltipWrapper tooltip={'Delete'}>
+                        <div
+                            onClick={handleDeleteClick}
+                            className={`h-full flex items-center justify-center bg-background-primary rounded-lg border border-red-600 px-3 py-2 cursor-pointer hover:bg-red-50 hover:border-red-700 transition-all duration-300 ease-in-out small-button-shadow ${isDeleting ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                            <span className="text-red-600 text-sm font-medium">
+                                {isDeleting ? 'Deleting...' : 'Delete'}
+                            </span>
+                        </div>
+                    </TooltipWrapper>
                 </div>
             </div>
 
