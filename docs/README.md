@@ -4,4 +4,4 @@
 
 
 ## Usage
-To use Fetchr just follow this [link](https://fetchr.lv)!
+To use Fetchr just follow this [link](https://fetchr.pro)!
