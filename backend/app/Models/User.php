@@ -20,7 +20,7 @@ class User extends Authenticatable implements FilamentUser
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
@@ -28,6 +28,12 @@ class User extends Authenticatable implements FilamentUser
         'email',
         'password',
         'role',
+        'gmail_access_token',
+        'gmail_refresh_token',
+        'gmail_token_expires_at',
+        'gmail_account_email',
+        'gmail_account_name',
+        'gmail_account_picture',
     ];
 
     // Relationships:

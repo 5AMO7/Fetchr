@@ -25,7 +25,7 @@ function Sidebar() {
 
             <div className='flex flex-col gap-1 mt-5 mb-auto'>
                 <NavGroup title="GENERAL">
-                    <NavItem icon={MagnifyingGlassIcon} text="Explore" path={'/'} />
+                    <NavItem icon={MagnifyingGlassIcon} text="Explore" path={'/explore'} />
                 </NavGroup>
                 <NavGroup title="TOOLS">
                     <NavItem icon={BriefcaseIcon} text="Saved leads" path={'/saved-leads'} />

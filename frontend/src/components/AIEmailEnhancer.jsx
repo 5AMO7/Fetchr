@@ -34,7 +34,7 @@ function AIEmailEnhancer({ currentContent, onContentUpdate, onSubjectUpdate }) {
                 // Call the content update callback
                 onContentUpdate(result.content);
                 
-                // If AI generated a subject, update it too
+                // If AI generated a subject update that too
                 if (result.subject && onSubjectUpdate) {
                     console.log('AI also generated subject:', result.subject);
                     onSubjectUpdate(result.subject);
@@ -46,7 +46,7 @@ function AIEmailEnhancer({ currentContent, onContentUpdate, onSubjectUpdate }) {
                 // Verify the callback was called
                 console.log('onContentUpdate callback called successfully');
                 
-                // Close the dropdown after a delay to prevent race conditions
+                // Closes the dropdown after a 150ms delay to prevent issues
                 setTimeout(() => {
                     console.log('Closing AI enhancer dropdown');
                     setIsOpen(false);
@@ -103,10 +103,10 @@ function AIEmailEnhancer({ currentContent, onContentUpdate, onSubjectUpdate }) {
             if (result.success) {
                 console.log('AI Structure improvement successful, updating content:', result.content.substring(0, 100) + '...');
                 
-                // Update content first
+                // Updates content first
                 onContentUpdate(result.content);
                 
-                // If AI generated a subject, update it too
+                // If AI generated a subject update that too
                 if (result.subject && onSubjectUpdate) {
                     console.log('AI also generated subject during structure improvement:', result.subject);
                     onSubjectUpdate(result.subject);
@@ -115,7 +115,7 @@ function AIEmailEnhancer({ currentContent, onContentUpdate, onSubjectUpdate }) {
                     showToast('success', 'Email structure improved successfully!');
                 }
                 
-                // Close the dropdown after a small delay to avoid state conflicts
+                // Closes the dropdown after a small delay to avoid conflicts
                 setTimeout(() => {
                     setIsOpen(false);
                 }, 100);

@@ -83,4 +83,6 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/oauth/tokens', [AuthController::class, 'saveOAuthTokens']);
+    Route::post('/oauth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 }); 

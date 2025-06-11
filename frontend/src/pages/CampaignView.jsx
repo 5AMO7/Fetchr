@@ -39,7 +39,7 @@ function CampaignView() {
         if (loading) {
             return (
                 <div className="flex items-center justify-center h-full">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
+                                                <div className="h-12 w-12 animate-spin rounded-full border-2 border-accent border-t-transparent"></div>
                 </div>
             );
         }

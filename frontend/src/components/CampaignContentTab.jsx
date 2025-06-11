@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PlusIcon, DocumentTextIcon, ClockIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 import api from '../utils/api';
 import { useToast } from '../context/ToastContext';
@@ -49,123 +49,142 @@ function CampaignContentTab({ campaign }) {
         return `${days} day${days !== 1 ? 's' : ''}, ${remainingHours} hour${remainingHours !== 1 ? 's' : ''}`;
     };
 
-    const truncateText = (text, maxLength = 100) => {
-        if (!text) return 'No content';
-        return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    const truncateText = (text, maxLength = 150) => {
+        if (!text) return 'No content available';
+        const strippedText = text.replace(/<[^>]*>/g, ''); // Remove HTML tags
+        return strippedText.length > maxLength ? strippedText.substring(0, maxLength) + '...' : strippedText;
     };
 
     if (loading) {
         return (
             <div className="flex items-center justify-center h-full">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent"></div>
             </div>
         );
     }
 
     return (
-        <div className="h-full flex flex-col p-6">
-            <div className="flex items-center justify-between mb-6">
+        <div className="h-full flex flex-col p-8">
+            <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h2 className="text-xl font-semibold text-text-primary">Campaign Content</h2>
-                    <p className="text-text-secondary-dark mt-1">
+                    <h2 className="text-2xl font-bold text-gray-900">Campaign Content</h2>
+                    <p className="text-gray-600 mt-1">
                         {steps.length} step{steps.length !== 1 ? 's' : ''} in this campaign sequence
                     </p>
                 </div>
-                <div
-                    className="h-9 flex items-center justify-center bg-background-primary rounded-lg border border-accent px-6 cursor-pointer hover:bg-dark-primary hover:border-accent-dark transition-all duration-300 ease-in-out small-button-shadow"
-                >
+                <button className="h-9 flex items-center justify-center bg-background-primary rounded-lg border border-accent px-6 cursor-pointer hover:bg-dark-primary hover:border-accent-dark transition-all duration-300 ease-in-out small-button-shadow">
                     <PlusIcon className="w-4 h-4 text-accent mr-2" />
                     <span className="text-accent font-medium">Add Step</span>
-                </div>
+                </button>
             </div>
 
             {steps.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center">
-                    <div className="text-center">
-                        <DocumentTextIcon className="w-16 h-16 text-text-secondary-dark mx-auto mb-4" />
-                        <h3 className="text-lg font-medium text-text-primary mb-2">No steps added yet</h3>
-                        <p className="text-text-secondary-dark mb-4">
+                    <div className="text-center max-w-md">
+                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <DocumentTextIcon className="w-8 h-8 text-gray-400" />
+                        </div>
+                        <h3 className="text-xl font-semibold text-gray-900 mb-3">No steps added yet</h3>
+                        <p className="text-gray-600 mb-6">
                             Create email steps to build your campaign sequence.
                         </p>
-                        <div className="h-9 flex items-center justify-center bg-background-primary rounded-lg border border-accent px-6 cursor-pointer hover:bg-dark-primary hover:border-accent-dark transition-all duration-300 ease-in-out small-button-shadow">
+                        <button className="h-9 flex items-center justify-center bg-background-primary rounded-lg border border-accent px-6 cursor-pointer hover:bg-dark-primary hover:border-accent-dark transition-all duration-300 ease-in-out small-button-shadow mx-auto">
                             <span className="text-accent font-medium">Create Your First Step</span>
-                        </div>
+                        </button>
                     </div>
                 </div>
             ) : (
                 <div className="flex-1 overflow-hidden">
-                    <div className="space-y-4 max-h-full overflow-y-auto">
+                    <div className="space-y-6 max-h-full overflow-y-auto">
                         {steps.map((step, index) => (
-                            <div key={step.id} className="bg-background-primary rounded-xl border border-border-dark p-6">
-                                <div className="flex items-start justify-between mb-4">
+                            <React.Fragment key={step.id}>
+                                {/* Delay Indicator (shown before step, except first step) */}
+                                {index > 0 && (
+                                    <div className="flex items-center justify-center py-4">
+                                        <div className="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-lg px-4 py-2">
+                                            <ClockIcon className="w-4 h-4 text-orange-600" />
+                                            <span className="text-sm font-medium text-orange-700">
+                                                Wait {formatDelay(step.delay_hours).toLowerCase()}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                <div className="bg-white rounded-2xl border border-border-dark p-8">
+                                <div className="flex items-start justify-between mb-6">
                                     <div className="flex items-center gap-4">
                                         <div className="flex-shrink-0">
-                                            <div className="w-10 h-10 bg-accent text-white rounded-full flex items-center justify-center font-semibold">
+                                            <div className="w-12 h-12 bg-gradient-to-br from-accent to-accent-dark text-white rounded-xl flex items-center justify-center font-bold text-lg shadow-lg">
                                                 {step.step_order}
                                             </div>
                                         </div>
                                         <div>
-                                            <div className="flex items-center gap-2 mb-1">
+                                            <div className="flex items-center gap-2 mb-2">
                                                 <EnvelopeIcon className="w-4 h-4 text-accent" />
                                                 <span className="text-sm font-medium text-accent uppercase">
                                                     {step.type} Step
                                                 </span>
                                             </div>
-                                            <h3 className="text-lg font-semibold text-text-primary">
-                                                {step.subject}
+                                            <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                                                {step.subject || 'No subject set'}
                                             </h3>
                                             {step.delay_hours > 0 && (
-                                                <div className="flex items-center gap-1 mt-1">
-                                                    <ClockIcon className="w-4 h-4 text-text-secondary-dark" />
-                                                    <span className="text-sm text-text-secondary-dark">
+                                                <div className="flex items-center gap-1">
+                                                    <ClockIcon className="w-4 h-4 text-gray-500" />
+                                                    <span className="text-sm text-gray-600">
                                                         Delay: {formatDelay(step.delay_hours)}
                                                     </span>
                                                 </div>
                                             )}
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-8 flex items-center justify-center bg-background-primary rounded-lg border border-blue-600 px-3 cursor-pointer hover:bg-blue-50 hover:border-blue-700 transition-all duration-300 ease-in-out small-button-shadow">
-                                            <span className="text-blue-600 text-sm font-medium">Edit</span>
-                                        </div>
-                                        <div className="h-8 flex items-center justify-center bg-background-primary rounded-lg border border-accent px-3 cursor-pointer hover:bg-dark-primary hover:border-accent-dark transition-all duration-300 ease-in-out small-button-shadow">
-                                            <span className="text-accent text-sm font-medium">Preview</span>
-                                        </div>
-                                        <div
+                                    <div className="flex items-center gap-3">
+                                        <button className="h-9 flex items-center justify-center bg-background-primary rounded-lg border border-border-dark px-6 cursor-pointer hover:bg-dark-primary transition-all duration-300 ease-in-out small-button-shadow">
+                                            <span className="text-text-primary font-medium">Edit</span>
+                                        </button>
+                                        <button className="h-9 flex items-center justify-center bg-background-primary rounded-lg border border-accent px-6 cursor-pointer hover:bg-dark-primary hover:border-accent-dark transition-all duration-300 ease-in-out small-button-shadow">
+                                            <span className="text-accent font-medium">Preview</span>
+                                        </button>
+                                        <button
                                             onClick={() => handleDeleteStep(step.id)}
-                                            className="h-8 flex items-center justify-center bg-background-primary rounded-lg border border-red-600 px-3 cursor-pointer hover:bg-red-50 hover:border-red-700 transition-all duration-300 ease-in-out small-button-shadow"
+                                            className="h-9 flex items-center justify-center bg-background-primary rounded-lg border border-red-600 px-6 cursor-pointer hover:bg-red-50 hover:border-red-700 transition-all duration-300 ease-in-out small-button-shadow"
                                         >
-                                            <span className="text-red-600 text-sm font-medium">Delete</span>
-                                        </div>
+                                            <span className="text-red-600 font-medium">Delete</span>
+                                        </button>
                                     </div>
                                 </div>
 
-                                <div className="bg-gray-50 rounded-lg p-4">
-                                    <h4 className="text-sm font-medium text-text-secondary-dark mb-2">Email Content Preview:</h4>
-                                    <div className="text-sm text-text-primary">
-                                        <p className="mb-2"><strong>Subject:</strong> {step.subject}</p>
-                                        <div className="bg-white rounded border p-3">
-                                            <div 
-                                                className="prose prose-sm max-w-none"
-                                                dangerouslySetInnerHTML={{ 
-                                                    __html: truncateText(step.body?.replace(/\n/g, '<br>'))
-                                                }}
-                                            />
-                                            {step.body && step.body.length > 100 && (
-                                                <span className="text-accent text-xs mt-2 hover:text-accent-dark cursor-pointer underline">
-                                                    View Full Content
-                                                </span>
-                                            )}
+                                <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                                    <h4 className="text-sm font-semibold text-gray-700 mb-4">Email Content Preview</h4>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <div className="text-xs font-medium text-gray-500 mb-1">Subject Line:</div>
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {step.subject || 'No subject set'}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className="text-xs font-medium text-gray-500 mb-2">Email Body:</div>
+                                            <div className="bg-white rounded-lg border border-gray-200 p-4 min-h-[120px]">
+                                                <div className="prose prose-sm max-w-none text-gray-700">
+                                                    {truncateText(step.body)}
+                                                </div>
+                                                {(!step.body || step.body.trim() === '') && (
+                                                    <div className="text-gray-400 italic">
+                                                        No content available
+                                                    </div>
+                                                )}
+                                                {step.body && step.body.length > 150 && (
+                                                    <button className="text-accent text-xs mt-3 hover:text-accent-dark underline">
+                                                        View Full Content
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                {index < steps.length - 1 && (
-                                    <div className="flex justify-center mt-6">
-                                        <div className="w-px h-8 bg-border-dark"></div>
-                                    </div>
-                                )}
-                            </div>
+                                </div>
+                            </React.Fragment>
                         ))}
                     </div>
                 </div>

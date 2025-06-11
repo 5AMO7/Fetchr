@@ -19,6 +19,12 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->text('gmail_access_token')->nullable();
+            $table->text('gmail_refresh_token')->nullable();
+            $table->timestamp('gmail_token_expires_at')->nullable();
+            $table->string('gmail_account_email')->nullable();
+            $table->string('gmail_account_name')->nullable();
+            $table->string('gmail_account_picture')->nullable();
             $table->timestamps();
         });
 

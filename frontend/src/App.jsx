@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import LandingPage from './pages/LandingPage'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import Explore from './pages/Explore'
@@ -15,6 +16,8 @@ import Support from './pages/Support'
 import EmailTemplatesCreate from './pages/EmailTemplatesCreate'
 import EmailTemplatesEdit from './pages/EmailTemplatesEdit'
 import Profile from './pages/Profile'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsOfService from './pages/TermsOfService'
 
 function App() {
   return (
@@ -22,9 +25,10 @@ function App() {
       <ToastProvider>
         <Router>
           <Routes>
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/" element={
+            <Route path="/explore" element={
               <ProtectedRoute>
                 <Explore />
               </ProtectedRoute>
@@ -79,6 +83,8 @@ function App() {
                 <Support />
               </ProtectedRoute>
             } />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
           </Routes>
         </Router>
       </ToastProvider>

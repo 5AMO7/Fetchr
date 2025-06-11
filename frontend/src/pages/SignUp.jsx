@@ -29,7 +29,7 @@ export default function SignUp() {
     
     setIsLoading(false);
     if (success) {
-      navigate('/');
+      navigate('/explore');
     }
   };
 
@@ -96,7 +96,7 @@ export default function SignUp() {
 
             <div className='flex items-center gap-3 w-full'>
               <input type="checkbox" className="w-5 h-5 rounded-xl border border-border-dark accent-accent" name='acceptTerms' id='acceptTerms' required />
-              <label htmlFor="acceptTerms" className='text-text-secondary-dark text-md'>I agree to the <a href="#" className='text-accent hover:text-accent'>Terms of Service</a> and <a href="#" className='text-accent hover:text-accent'>Privacy Policy</a></label>
+              <label htmlFor="acceptTerms" className='text-text-secondary-dark text-md'>I agree to the <Link to="/terms-of-service" className='text-accent hover:text-accent' target="_blank">Terms of Service</Link> and <Link to="/privacy-policy" className='text-accent hover:text-accent' target="_blank">Privacy Policy</Link></label>
             </div>
           </div>
 

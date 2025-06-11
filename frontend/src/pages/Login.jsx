@@ -18,7 +18,7 @@ export default function Login() {
     
     setIsLoading(false);
     if (success) {
-      navigate('/');
+      navigate('/explore');
     }
   };
 
